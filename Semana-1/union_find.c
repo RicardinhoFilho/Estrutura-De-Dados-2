@@ -40,7 +40,7 @@ int count_UF(UF *uf)
 int connected_UF(UF *uf, int p, int q)
 {
     
-    printf("%d == %d\n",find_UF(uf, p) , find_UF(uf, q));
+    // printf("%d == %d\n",find_UF(uf, p) , find_UF(uf, q));
  return find_UF(uf, p) == find_UF(uf, q)?  1 : 0;
 }
 
@@ -55,7 +55,7 @@ void union_UF(UF *uf, int p, int q)
     int aux = find_UF(uf,p);
    for (int i = 0; i < uf->n; i++)
       if (find_UF(uf,i) == aux) {
-               printf("CONECTANDO o %dcom o %d\n\n ", i, uf->id[q]);
+               //printf("CONECTANDO o %dcom o %d\n\n ", i, uf->id[q]);
           uf->id[i] = uf->id[q];};
    uf->count--;
     return;
@@ -78,8 +78,6 @@ int main()
         {
             printf("%d %d\n", p, q);
             union_UF(uf, p, q);
-        }else{
-            printf("CONECTADOS");
         }
 
         scanf("%d %d", &p, &q);
