@@ -1,16 +1,20 @@
-
 #include <stdio.h>
 #include <stdlib.h>
-void mergeInt(int v[], int inicio, int fim, int aux[]) {
-    int meio = (inicio + fim) / 2;
-    int i = inicio;
+void merge(int v[], int direita, int esquerda, int aux[])
+{
+    int meio = (direita + esquerda) / 2;
+    int i = direita;
     int j = meio + 1;
     int k = 0;
-    while (i <= meio || j <= fim) {
-        if (i <= meio && (j > fim || v[i] < v[j])) {
+    while (i <= meio || j <= esquerda)
+    {
+        if (i <= meio && (j > esquerda || v[i] < v[j]))
+        {
             aux[k] = v[i];
             i++;
-        } else {
+        }
+        else
+        {
             aux[k] = v[j];
             j++;
         }
@@ -18,30 +22,64 @@ void mergeInt(int v[], int inicio, int fim, int aux[]) {
     }
 }
 
-void mergeSortInt(int v[], int inicio, int fim, int aux[]) {
-    int meio = (inicio + fim) / 2;
+void mergeSortOrdena(int v[], int direita, int esquerda, int aux[])
+{
+    printf("esquerda-> %d, direita->%d\n", esquerda,direita);
+    int meio = (direita + esquerda) / 2;
+    if (direita == esquerda)
+    {
+        return;
+    }
 
-    if (inicio < fim) {
-        mergeSortInt(v, inicio, meio, aux);
-        mergeSortInt(v, meio + 1, fim, aux);
-        mergeInt(v, inicio, fim, aux);
+    if (direita < esquerda)
+    {
+        mergeSortOrdena(v, direita, meio, aux);
+        mergeSortOrdena(v, meio + 1, esquerda, aux);
+        merge(v, direita, esquerda, aux);
 
-        for (int l = 0; l < fim - inicio + 1; l++) {
-            v[inicio + l] = aux[l];
+        for (int l = 0; l < esquerda - direita + 1; l++)
+        {
+            v[direita + l] = aux[l];
         }
     }
 }
 
-void mergeSort(int v[], int tamanho) {
+void mergeSort(int v[], int tamanho)
+{
     int *aux = malloc(sizeof(int) * tamanho);
-    mergeSortInt(v, 0, tamanho, aux);
+    mergeSortOrdena(v, 0, tamanho, aux);
     free(aux);
 }
 
-int main() {
-    int a[] = {10, 2, 7, 1, 4, 9, 3, 8, 0, 5, 6, 8, 9};
-    mergeSort(a, 11);
-    for (int i = 0; i < 1; i++) {
+int EstaOrdemCrescente(int vetor[], int tamanho)
+{
+    for (int i = 1; i < tamanho; i++)
+        if (vetor[i - 1] > vetor[i])
+            return 0;
+    return 1;
+}
+
+int main()
+{
+    int a[] = {1,2,3,5,4};
+
+    int tamanhoVetor = sizeof(a) / sizeof(int);
+    int checarOrdenado = EstaOrdemCrescente(a, tamanhoVetor);
+
+    
+
+    if (checarOrdenado)
+    {
+        printf("Vetor está ordenado!\n");
+    }
+    else
+    {
+        mergeSort(a, tamanhoVetor);
+    }
+
+    for (int i = 0; i < tamanhoVetor; i++)
+    {
+
         printf("%d \n", a[i]);
     }
 }
