@@ -1,69 +1,101 @@
-#include <stdio.h>
 #include <stdlib.h>
-void merge(int *a, int l, int m, int r)
+#include <stdio.h>
+
+typedef struct node node;
+struct node
 {
+    int num;
+    node *left;
+    node *right;
+};
 
-    int i, j, k, *aux;
-    aux = (int *)malloc(sizeof(int) * r + 1);
-    for (i = m + 1; i > l; i--)
-        aux[i - 1] = a[i - 1];
-    for (j = m; j < r; j++)
-        aux[r + m - j] = a[j + 1];
-
-
-        for(k=1; k<=r; k++){
-            if(aux[j]<aux[i]) a[k] = aux[j--];
-            else a[k] = aux[i++];
-        }
+node *cria_node(int num)
+{
+    node *root = (node *)malloc(sizeof(node));
+    root->num = num;
+    root->left = NULL;
+    root->right = NULL;
+    if (num > root->num)
+        root->right->num = num;
+    if (num < root->num)
+        root->left->num = num;
+    return root;
 }
 
-void mergeSortOrdena(int *v, int esq, int dir)
+void print(node *root)
 {
-    if (esq == dir)
+    if (root != NULL)
     {
-        return;
+        printf("%d\t", root->num);
+        print(root->left);
+        print(root->right);
     }
-
-    int meio = (esq + dir) / 2;
-    mergeSortOrdena(v, esq, dir);
-    mergeSortOrdena(v, meio + 1, dir);
-    merge(v, esq, meio, dir);
 }
 
-void mergeSort(int v[], int n)
+void free_arvore(node *root)
 {
-    mergeSortOrdena(v, 0, n - 1);
-}
-
-int EstaOrdemCrescente(int *vetor, int tamanho)
-{
-    for (int i = 1; i < tamanho; i++)
-        if (vetor[i - 1] > vetor[i])
-            return 0;
-    return 1;
-}
-
-int main()
-{
-    int a[] = {10, 2, 7, 1, 4, 9, 3, 8, 1, 5, 6, 8, 9};
-
-    int tamanhoVetor = sizeof(a) / sizeof(int);
-    int ordenado = EstaOrdemCrescente(a, tamanhoVetor);
-
-    printf("\nTESTE-> %d\n", tamanhoVetor);
-
-    if (ordenado)
+    if (root != NULL)
     {
-        printf("Vetor está ordenado!\n");
+        free_arvore(root->left);
+        free_arvore(root->right);
+        free_arvore(root);
+    }
+}
+
+int eh_espelho(node *root, node *root_2)
+{
+    int checa_esquerda = eh_espelho(root->left, root_2->right);
+    int checa_direita = eh_espelho(root->right, root_2->left);
+    if (root->num == root_2->num && checa_direita && checa_esquerda)
+    {
+        printf("Sao espelho");
+        return 1;
     }
     else
     {
-        mergeSort(a, tamanhoVetor);
-    }
+        printf("Nao sao espelho");
+        return 0;
+    };
+}
 
-    for (int i = 0; i < tamanhoVetor; i++)
+node *cria_espelho(node *root, node **root_e)
+{
+    if (root != NULL)
+    {
+        *root_e = cria_node(root->num);
+        cria_espelho(root->left, &((*root_e)->right));
+        cria_espelho(root->right, &((*root_e)->left));
+    }
+}
+
+void free_tree(node *root)
+{
+    if (root != NULL)
     {
 
-        printf("%d \n", a[i]);
+        free_tree(root->left);
+        free_tree(root->right);
+        free(root);
     }
+}
+
+void main()
+{
+    node *root = cria_node(5);
+    root->left = cria_node(10);
+    root->right = cria_node(2);
+   
+
+    node *root_2 = NULL;
+    cria_espelho(root, &root_2);
+
+    print(root);
+    printf("\n");
+    print(root_2);
+    printf("\n");
+
+    eh_espelho(root, root_2);
+
+    // free_arvore(root);
+    // free_arvore(root_2);
 }
